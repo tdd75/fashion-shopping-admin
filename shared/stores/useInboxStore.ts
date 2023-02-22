@@ -1,5 +1,6 @@
 import { Login } from '@/shared/interfaces/request/Login';
 import { ListResponse } from '@/shared/interfaces/response/ListResponse';
+import { tokenStorage } from '@/shared/utils/storage';
 
 interface InboxState {
   conversations: any;
@@ -47,11 +48,11 @@ export const useInboxStore = defineStore('inbox', {
       }
     },
     getConnection() {
+      const config = useRuntimeConfig();
+      const access = tokenStorage.value.access;
       this.connection?.close();
       this.connection = new WebSocket(
-        `${import.meta.env.VITE_WS_URL}/msg/?token=${localStorage.getItem(
-          'access',
-        )}&receiver=${this.selectedUser.id}`,
+        `${config.public.wsURL}/msg/?token=${access}&receiver=${this.selectedUser.id}`,
       );
       this.connection.onmessage = (event: MessageEvent) => {
         const newMessage = JSON.parse(event.data);
