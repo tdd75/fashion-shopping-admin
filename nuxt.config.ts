@@ -25,7 +25,8 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     public: {
-      baseURL: process.env.BASE_URL || 'http://localhost:8000/api/v1/',
+      baseURL: process.env.BASE_URL || 'http://localhost:8000/api/v1',
+      wsURL: process.env.WS_URL || 'ws://localhost:8000/ws',
     },
   },
   modules: ['@pinia/nuxt', '@vueuse/nuxt', 'nuxt-lodash'],
