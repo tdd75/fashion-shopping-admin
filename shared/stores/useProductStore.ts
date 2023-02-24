@@ -20,10 +20,10 @@ export const useProductStore = defineStore('product', {
     product: {
       id: 0,
       name: '',
+      description: '',
       image: '',
       stocks: 0,
       price_range: [],
-      description: '',
       variants: [],
     },
     totalItems: 0,

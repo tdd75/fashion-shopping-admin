@@ -2,33 +2,41 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-responsive class="overflow-y-auto fill-height" height="500">
-          <v-card>
-            <v-list lines="two">
-              <v-list-item
-                v-for="conv in inboxStore.conversations"
-                :key="conv.user.id"
-                :title="conv.user.full_name"
-                :prepend-avatar="
-                  conv.user.avatar ||
-                  'https://cdn.vuetifyjs.com/images/lists/1.jpg'
-                "
-                @click="onSelectUser(conv.user)"
-              >
-                <template #subtitle>
-                  <div v-html="conv.last_message"></div>
-                </template>
-              </v-list-item>
-            </v-list>
-          </v-card>
-        </v-responsive>
+        <v-card class="fill-height">
+          <v-card-title> Inbox </v-card-title>
+          <v-list lines="two">
+            <v-list-item
+              :class="{
+                'bg-primary': inboxStore.selectedUser?.id === conv.user.id,
+              }"
+              v-for="conv in inboxStore.conversations"
+              :key="conv.user.id"
+              :title="conv.user.full_name"
+              :prepend-avatar="
+                conv.user.avatar ||
+                'https://cdn.vuetifyjs.com/images/lists/1.jpg'
+              "
+              @click="onSelectUser(conv.user)"
+            >
+              <template #subtitle>
+                <div v-html="conv.last_message"></div>
+              </template>
+            </v-list-item>
+          </v-list>
+        </v-card>
       </v-col>
       <v-col cols="auto" class="flex-grow-1">
-        <v-card>
+        <v-card v-if="inboxStore.selectedUser">
           <v-card-title>
-            {{ inboxStore.selectedUser?.full_name }}
+            <div class="border-b-sm">
+              {{ inboxStore.selectedUser?.full_name }}
+            </div>
           </v-card-title>
-          <v-card-text class="flex-grow-1 overflow-y-auto">
+          <v-card-text
+            class="flex-grow-1 overflow-y-auto"
+            style="height: 500px"
+            v-if="inboxStore.selectedUser"
+          >
             <div
               v-for="msg in inboxStore.selectedUserMessages"
               :key="msg.id"
@@ -55,19 +63,26 @@
               </v-chip>
             </div>
           </v-card-text>
-          <v-card-text class="flex-shrink-1">
-            <v-text-field
-              v-model="inputContent"
-              label="Type a message"
-              type="text"
-              no-details
-              outlined
-              append-icon="mdi-send"
-              @keyup.enter="onSend"
-              @click:append="onSend"
-              hide-details
-            />
-          </v-card-text>
+          <v-text-field
+            class="px-3 py-2"
+            v-model="inputContent"
+            label="Type a message"
+            type="text"
+            no-details
+            outlined
+            @keyup.enter="onSend"
+            @click:append="onSend"
+            hide-details
+          >
+            <template #append>
+              <v-icon icon="mdi-send" @click="onSend"> </v-icon>
+            </template>
+          </v-text-field>
+        </v-card>
+        <v-card v-else :height="600">
+          <v-card-title>
+            {{ 'Select a user to start chatting' }}
+          </v-card-title>
         </v-card>
       </v-col>
     </v-row>

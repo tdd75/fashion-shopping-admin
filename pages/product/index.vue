@@ -2,44 +2,51 @@
   <v-container>
     <v-col cols="12">
       <v-card class="py-3">
-        <v-card-title class="text-primary mb-2">
+        <v-card-title>
           <div>
-            <div>Product List</div>
-
-            <div class="flex justify-space-between">
-              <ButtonFloating
-                icon="mdi-plus"
-                :on-click="
-                  () =>
-                    navigateTo({
-                      name: ROUTE_NAME.PRODUCT.DETAIL,
-                      params: { productId: 'add' },
-                    })
-                "
-              ></ButtonFloating>
-              <!-- <v-col cols="6">
-              <v-text-field
-                v-model="productStore.query.search"
-                label="Search"
-                @keyup.enter="productStore.fetchProducts"
-              />
-            </v-col> -->
-              <v-btn
-                :disabled="selected.length === 0"
-                icon="mdi-delete"
-                color="error"
-                @click="
-                  showDialog(
-                    NotifyType.ERROR,
-                    'Delete selected products?',
-                    'Are you sure you want to delete selected products?',
-                    'DELETE',
-                    deleteSelectedProducts,
-                  )
-                "
-              >
-              </v-btn>
-            </div>
+            <div class="text-primary mb-2">Product List</div>
+            <v-row justify="space-between" align="center">
+              <v-col cols="6">
+                <v-text-field
+                  v-model="search"
+                  label="Search"
+                  @keyup.enter="
+                    () => {
+                      search = search.trim();
+                      productStore.query.search = search;
+                    }
+                  "
+                />
+              </v-col>
+              <div class="flex justify-space-between">
+                <v-btn
+                  :disabled="selected.length === 0"
+                  icon="mdi-delete"
+                  color="error"
+                  @click="
+                    showDialog(
+                      NotifyType.ERROR,
+                      'Delete selected products?',
+                      'Are you sure you want to delete selected products?',
+                      'DELETE',
+                      deleteSelectedProducts,
+                    )
+                  "
+                >
+                </v-btn>
+                <v-btn
+                  class="bg-primary mx-5"
+                  @click="
+                    () =>
+                      navigateTo({
+                        name: ROUTE_NAME.PRODUCT.DETAIL,
+                        params: { productId: 'add' },
+                      })
+                  "
+                  >Create</v-btn
+                >
+              </div>
+            </v-row>
           </div>
         </v-card-title>
         <v-card-text>
@@ -129,6 +136,7 @@ const headers = [
 
 const productStore = useProductStore();
 const selected = ref([]);
+const search = ref('');
 
 onMounted(() => {
   productStore.fetchProducts();

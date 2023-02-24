@@ -1,19 +1,21 @@
 <template>
-  <v-container>
+  <v-container v-if="!orderStore.isLoading">
     <v-col cols="12">
       <v-card class="py-3">
-        <v-card-title class="text-primary mb-2"> Order List </v-card-title>
-        <!-- Card Actions -->
         <v-card-title>
-          <div class="flex justify-space-between">
-            <v-col cols="6">
-              <v-text-field
-                v-model="orderStore.query.search"
-                label="Search"
-                @keyup.enter="orderStore.fetchOrders"
-              />
-            </v-col>
-          </div>
+          <div class="text-primary mb-2">Order List</div>
+          <v-col cols="6">
+            <v-text-field
+              v-model="search"
+              label="Search"
+              @keyup.enter="
+                () => {
+                  search = search.trim();
+                  orderStore.query.search = search;
+                }
+              "
+            />
+          </v-col>
         </v-card-title>
         <!-- Card Content -->
         <v-card-text>
@@ -108,6 +110,7 @@ const headers = [
 
 const orderStore = useOrderStore();
 const selected = ref([]);
+const search = ref('');
 
 onMounted(() => {
   orderStore.fetchOrders();

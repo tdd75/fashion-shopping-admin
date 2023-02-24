@@ -8,106 +8,116 @@
     <!-- Content -->
     <v-card :title="product?.name || 'Create new product'">
       <v-card-text>
-        <!-- Name -->
-        <v-text-field
-          v-model="product.name"
-          label="Name"
-          type="text"
-          variant="outlined"
-        ></v-text-field>
-        <!-- Description -->
-        <v-textarea
-          v-model="product.description"
-          label="Description"
-          type="text"
-          variant="outlined"
-        ></v-textarea>
-        <!-- Image -->
-        <v-row align="center" class="pa-3">
-          <v-img
-            :src="
-              selectedImageUrl ||
-              product?.image ||
-              'https://via.placeholder.com/150'
-            "
-            class="me-4"
-            width="auto"
-            height="256"
-          ></v-img>
-          <v-file-input
-            v-model="imageField"
-            accept="image/*"
-            label="Select an image"
-          ></v-file-input>
-        </v-row>
+        <v-form ref="productFormRef">
+          <!-- Name -->
+          <v-text-field
+            class="mb-3"
+            v-model="product.name"
+            label="Name"
+            type="text"
+            variant="outlined"
+            :rules="[
+              (v) => !!v || 'Name is required',
+              (v) => v.length <= 255 || 'Name must be less than 255 characters',
+            ]"
+          ></v-text-field>
+          <!-- Description -->
+          <v-textarea
+            class="mb-3"
+            v-model="product.description"
+            label="Description"
+            type="text"
+            variant="outlined"
+          ></v-textarea>
+          <!-- Image -->
+          <v-row align="center" class="pa-3">
+            <v-img
+              :src="
+                selectedImageUrl ||
+                product?.image ||
+                'https://via.placeholder.com/150'
+              "
+              class="me-4"
+              width="auto"
+              height="256"
+            ></v-img>
+            <v-file-input
+              v-model="imageField"
+              accept="image/*"
+              label="Select an image"
+            ></v-file-input>
+          </v-row>
+        </v-form>
         <!-- Product Variants -->
-        <div class="text-h6 mb-4">Variants</div>
-        <v-row
-          v-for="variant in product?.variants"
-          align="center"
-          :class="{
-            'bg-amber-accent-1': !variant.id,
-          }"
-        >
-          <v-col cols="10">
-            <v-row>
-              <!-- Color -->
-              <v-col cols="3">
-                <v-text-field
-                  v-model="variant.color"
-                  label="Color"
-                  type="text"
-                  variant="outlined"
-                ></v-text-field>
-              </v-col>
-              <!-- Size -->
-              <v-col cols="3">
-                <v-text-field
-                  v-model="variant.size"
-                  label="Size"
-                  type="text"
-                  variant="outlined"
-                ></v-text-field>
-              </v-col>
-              <!-- Price -->
-              <v-col cols="3">
-                <v-text-field
-                  v-model="variant.price"
-                  label="Price"
-                  type="number"
-                  variant="outlined"
-                ></v-text-field>
-              </v-col>
-              <!-- Available -->
-              <v-col cols="3">
-                <v-text-field
-                  v-model="variant.stocks"
-                  label="Available"
-                  type="number"
-                  variant="outlined"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-col>
-          <!-- Actions -->
-          <v-col cols="2">
-            <v-row class="mb-4" justify="center">
-              <v-btn
-                class="me-3"
-                icon="mdi-content-save"
-                color="info"
-                @click="saveVariant(variant)"
-              >
-              </v-btn>
-              <v-btn
-                icon="mdi-delete"
-                color="error"
-                @click="deleteVariant(variant?.id)"
-              >
-              </v-btn>
-            </v-row>
-          </v-col>
-        </v-row>
+        <v-form ref="productVariantFormRef">
+          <div class="text-h6 mb-4">Variants</div>
+          <v-row
+            v-for="variant in product?.variants"
+            align="center"
+            :class="{
+              'bg-amber-accent-1': !variant.id,
+            }"
+          >
+            <v-col cols="10">
+              <v-row>
+                <!-- Color -->
+                <v-col cols="3">
+                  <v-text-field
+                    v-model="variant.color"
+                    label="Color"
+                    type="text"
+                    variant="outlined"
+                  ></v-text-field>
+                </v-col>
+                <!-- Size -->
+                <v-col cols="3">
+                  <v-text-field
+                    v-model="variant.size"
+                    label="Size"
+                    type="text"
+                    variant="outlined"
+                  ></v-text-field>
+                </v-col>
+                <!-- Price -->
+                <v-col cols="3">
+                  <v-text-field
+                    v-model="variant.price"
+                    label="Price"
+                    type="number"
+                    variant="outlined"
+                  ></v-text-field>
+                </v-col>
+                <!-- Available -->
+                <v-col cols="3">
+                  <v-text-field
+                    v-model="variant.stocks"
+                    label="Available"
+                    type="number"
+                    variant="outlined"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+            </v-col>
+            <!-- Actions -->
+            <v-col cols="2">
+              <v-row class="mb-4" justify="center">
+                <v-btn
+                  class="me-3"
+                  icon="mdi-content-save"
+                  color="info"
+                  @click="saveVariant(variant)"
+                >
+                </v-btn>
+                <v-btn
+                  icon="mdi-delete"
+                  color="error"
+                  @click="deleteVariant(variant?.id)"
+                >
+                </v-btn>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-form>
         <!-- Create new variant -->
         <v-btn
           :class="{
@@ -136,6 +146,8 @@ const route = useRoute();
 const productStore = useProductStore();
 const productVariantStore = useProductVariantStore();
 const imageField = ref<File[]>();
+const productFormRef = ref(null);
+const productVariantFormRef = ref(null);
 
 onMounted(async () => {
   if (productId.value === null) {
@@ -181,6 +193,7 @@ const createNewVariant = () => {
 };
 
 const saveProduct = async () => {
+  await (productFormRef.value as any).validate();
   if (!productId.value) {
     await productStore.createProduct({
       ...product.value,
@@ -195,6 +208,7 @@ const saveProduct = async () => {
 };
 
 const saveVariant = async (variant: ProductVariant) => {
+  await (productVariantFormRef.value as any).validate();
   if (!productId) {
     return showSnackbar(NotifyType.ERROR, 'Please save product first');
   }

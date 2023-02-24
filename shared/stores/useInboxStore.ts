@@ -1,5 +1,7 @@
 import { Login } from '@/shared/interfaces/request/Login';
+import { Conversation } from '@/shared/interfaces/response/Conversation';
 import { ListResponse } from '@/shared/interfaces/response/ListResponse';
+import { Message } from '@/shared/interfaces/response/Message';
 import { tokenStorage } from '@/shared/utils/storage';
 
 interface InboxState {
@@ -23,18 +25,18 @@ export const useInboxStore = defineStore('inbox', {
   },
   actions: {
     async fetchConversations() {
-      const { data, error } = await useFetch<Login>(
+      const { data, error } = await useFetch<ListResponse<Conversation>>(
         '/chat/admin/conversations/',
         {
           ...useFetchOptions(),
         },
       );
       if (!error.value) {
-        this.conversations = data.value?.indentify;
+        this.conversations = data.value?.results;
       }
     },
     async fetchMessages(userId: number) {
-      const { data, error } = await useFetch<ListResponse<Login>>(
+      const { data, error } = await useFetch<ListResponse<Message>>(
         `/chat/admin/conversations/${userId}/`,
         {
           ...useFetchOptions(),

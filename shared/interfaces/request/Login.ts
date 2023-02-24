@@ -1,4 +1,4 @@
 export interface Login {
-  indentify: string;
+  identify: string;
   password: string;
 }
